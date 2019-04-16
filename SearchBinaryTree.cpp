@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+//#include "stdafx.h"
 //======================================================================
 #include <stdio.h>
 
@@ -95,9 +95,9 @@ class aBST
 //======================================================================
 
 
-int main()
+int test()
 {
-	aBST tree = aBST(3);
+   aBST tree = aBST(3);
    tree.AddKey(50);
    tree.AddKey(75);
    tree.AddKey(25);
