@@ -5,11 +5,11 @@
 class BSTNode
 {   
     public:
-      int      NodeKey; // ключ узла
-      int      Level; // глубина узла
-      BSTNode* LeftChild; // левый потомок
-      BSTNode* RightChild; // правый потомок
-      BSTNode* Parent; // родитель или NULL для корня
+      int      NodeKey; 
+      int      Level; 
+      BSTNode* LeftChild; 
+      BSTNode* RightChild; 
+      BSTNode* Parent; 
 	
       BSTNode(int key, BSTNode* parent)
       {
@@ -22,82 +22,79 @@ class BSTNode
 //====================================================================================== 
 class BalancedBST
 {
- public:
-	BSTNode* Root;
-   int BSTArray[MAX_LEN]; // временный массив для ключей дерева
-	int length;	
-	BalancedBST() 
-	{ 
-	   Root = NULL;
-	}
+   public:
+	   BSTNode* Root;
+      int BSTArray[MAX_LEN]; 
+	   int length;
+	
+	   BalancedBST() 
+	   { 
+	      Root = NULL;
+	   }
 
-   void CreateFromArray(int* a, int a_len) 
-	{        
-      if (a_len >= MAX_LEN) 
-         return;
-      for(int i = 0; i < MAX_LEN ; i++)
-      {
-         if (i < a_len) 
-            BSTArray[i] = a[i];            
-         else 
-            BSTArray[i] = -1;           
+      void CreateFromArray(int* a, int a_len) 
+      {        
+         if (a_len >= MAX_LEN) 
+            return;
+         for(int i = 0; i < MAX_LEN ; i++)
+         {
+            if (i < a_len) 
+               BSTArray[i] = a[i];            
+            else 
+               BSTArray[i] = -1;           
+         } 
+         length = a_len;
+      }
+
+      void GenerateTree() 
+      {       
+         Root = fillTree(NULL, 0, length, 1);
       } 
-      length = a_len;
-	}
 
-	void GenerateTree() 
-	{       
-      Root = fillTree(NULL, 0, length, 1);
-	} 
+      bool IsBalanced(BSTNode* root_node) 
+      {  
+	      int check = CheckLevel(root_node);
+         if (check)
+            return true; 
+         return false;
+      }
 
-	bool IsBalanced(BSTNode* root_node) 
-   {  
-		int check = CheckLevel(root_node);
-      if (check)
-         return true; // сбалансировано ли дерево с корнем root_node
-      return false;
-	}
+   private:
+      BSTNode* fillTree(BSTNode* parent, int index, int length, int level)
+      {  
+         BSTNode* Node = new BSTNode(BSTArray[index], parent);
+         Node->Level = level;
 
- private:
-   BSTNode* fillTree(BSTNode* parent, int index, int length, int level)
-   {  
-      BSTNode* Node = new BSTNode(BSTArray[index], parent);
-      Node->Level = level;
+         if ((2 * index + 1) < length && BSTArray[(2 * index + 1)] != -1)      // if the index is in an array and not empty
+            Node->LeftChild = fillTree(Node, 2 * index + 1, length, level+1 ); // left 
+         else {
+            Node->LeftChild = NULL;
+            return Node; }
 
-      if ((2 * index + 1) < length && BSTArray[(2 * index + 1)] != -1)      // if the index is in an array and not empty
-         Node->LeftChild = fillTree(Node, 2 * index + 1, length, level+1 ); // left 
-      else {
-         Node->LeftChild = NULL;
-         return Node; }
+         if ((2 * index + 2) < length && BSTArray[(2 * index + 2)] != -1)       // if the index is in an array and not empty  
+            Node->RightChild = fillTree(Node, 2 * index + 2, length, level+1 ); // right 
+         else {
+            Node->RightChild = NULL;
+            return Node; }
+         return Node;
+      }
 
-      if ((2 * index + 2) < length && BSTArray[(2 * index + 2)] != -1)          
-         Node->RightChild = fillTree(Node, 2 * index + 2, length, level+1 ); // right 
-      else {
-         Node->RightChild = NULL;
-         return Node; }
-      return Node;
-   }
+      int CheckLevel(BSTNode* Node)  
+      {      
+         int x, y;
+         if (Node->LeftChild == NULL)   x = Node->Level;
+         else                           x = CheckLevel(Node->LeftChild);      
 
-   int CheckLevel(BSTNode* Node)  
-   {      
-      int x, y;
-      if (Node->LeftChild == NULL)
-         x = Node->Level;
-      else
-         x = CheckLevel(Node->LeftChild);      
-
-      if (Node->RightChild == NULL)
-         y = Node->Level;
-      else
-         y = CheckLevel(Node->RightChild); 
+         if (Node->RightChild == NULL)  y = Node->Level;
+         else                           y = CheckLevel(Node->RightChild); 
       
-      if (x-y > 1 || x-y < -1 || x == 0 || y == 0)       
-         return 0;         
+         if (x-y > 1 || x-y < -1 || x == 0 || y == 0) // if not balanced      
+            return 0;         
       
-      if (x>y)       
-         return x;
-      return y;
-   }
+         if (x > y)       
+            return x;
+         return y;
+      }
 };
 //====================================================================================== 
 #define empty -1
